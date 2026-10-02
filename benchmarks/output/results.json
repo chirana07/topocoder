@@ -1,0 +1,89 @@
+{
+  "accuracy": {
+    "ReAct-Grep": 60.0,
+    "BM25-RAG": 80.0,
+    "Full-Graph": 60.0,
+    "TopoCoder (Top-1)": 0.0,
+    "TopoCoder (Top-3)": 60.0,
+    "TopoCoder (Top-5)": 100.0
+  },
+  "avg_tokens": {
+    "ReAct-Grep": 266.6,
+    "BM25-RAG": 237.4,
+    "Full-Graph": 379.6,
+    "TopoCoder": 552.4
+  },
+  "token_reduction_pct": -45.52160168598523,
+  "task_logs": [
+    {
+      "task_id": "TASK-01-AUTH-EXPIRATION",
+      "hop_distance": 3,
+      "grep_hit": false,
+      "rag_hit": false,
+      "full_graph_hit": true,
+      "topocoder_hit_top1": false,
+      "topocoder_hit_top3": true,
+      "topocoder_hit_top5": true,
+      "grep_tokens": 413,
+      "rag_tokens": 285,
+      "full_graph_tokens": 633,
+      "topocoder_tokens": 636
+    },
+    {
+      "task_id": "TASK-02-PIPELINE-NORMALIZATION",
+      "hop_distance": 3,
+      "grep_hit": false,
+      "rag_hit": true,
+      "full_graph_hit": false,
+      "topocoder_hit_top1": false,
+      "topocoder_hit_top3": false,
+      "topocoder_hit_top5": true,
+      "grep_tokens": 277,
+      "rag_tokens": 259,
+      "full_graph_tokens": 408,
+      "topocoder_tokens": 580
+    },
+    {
+      "task_id": "TASK-03-CACHE-COLLISION",
+      "hop_distance": 2,
+      "grep_hit": true,
+      "rag_hit": true,
+      "full_graph_hit": false,
+      "topocoder_hit_top1": false,
+      "topocoder_hit_top3": true,
+      "topocoder_hit_top5": true,
+      "grep_tokens": 258,
+      "rag_tokens": 258,
+      "full_graph_tokens": 262,
+      "topocoder_tokens": 599
+    },
+    {
+      "task_id": "TASK-04-RATE-LIMITER",
+      "hop_distance": 2,
+      "grep_hit": true,
+      "rag_hit": true,
+      "full_graph_hit": true,
+      "topocoder_hit_top1": false,
+      "topocoder_hit_top3": true,
+      "topocoder_hit_top5": true,
+      "grep_tokens": 191,
+      "rag_tokens": 191,
+      "full_graph_tokens": 303,
+      "topocoder_tokens": 428
+    },
+    {
+      "task_id": "TASK-05-METRICS-DRAIN",
+      "hop_distance": 3,
+      "grep_hit": true,
+      "rag_hit": true,
+      "full_graph_hit": true,
+      "topocoder_hit_top1": false,
+      "topocoder_hit_top3": false,
+      "topocoder_hit_top5": true,
+      "grep_tokens": 194,
+      "rag_tokens": 194,
+      "full_graph_tokens": 292,
+      "topocoder_tokens": 519
+    }
+  ]
+}
