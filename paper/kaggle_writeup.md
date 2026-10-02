@@ -18,9 +18,9 @@ In this work, we introduce **TopoCoder**, a neuro-symbolic framework that bridge
 
 ## 1. Introduction
 
-Autonomous coding agents (e.g., Devin, SWE-agent) have emerged as a disruptive paradigm for automated defect resolution, feature engineering, and developer assistance. However, state-of-the-art SWE agents remain tethered to massive, proprietary cloud APIs (e.g., Claude 3.5 Sonnet, GPT-4o). This cloud dependency introduces severe privacy risks for proprietary codebases, recurring API expenses, high round-trip network latency, and complete failure in offline or air-gapped environments.
+Autonomous coding agents (e.g., SWE-agent, Devin) offer automated defect resolution, yet remain tethered to proprietary cloud APIs (Claude 3.5, GPT-4o). This creates code privacy risks, recurring fees, network latency, and failure in offline environments.
 
-Small, open-weight models like Google's **Gemma** offer the promise of accessible, private, and localized intelligence directly on consumer workstations and everyday developer laptops. Nevertheless, operating an SWE agent offline on everyday hardware introduces severe constraints:
+Deploying open models like Google's **Gemma** on everyday hardware promises accessible, private intelligence. However, local deployment introduces three severe constraints:
 1. **The Context and Memory Ceiling**: On a consumer workstation with 8GB to 16GB of Unified Memory or VRAM, running Gemma-2-9B requires 4-bit/8-bit quantization. Allocating long KV-caches (e.g., 32k+ tokens) incurs catastrophic memory overhead and drastically throttles token generation throughput.
 2. **Context Pollution & Attention Degradation**: Standard SWE agents explore repositories using brute-force tools (`ripgrep`, `find`, `cat`). Reading 3 to 5 multi-thousand-line files quickly consumes 30,000+ tokens. Small models suffer from prompt distraction, losing the causal thread of execution and hallucinating invalid syntax or non-existent identifiers.
 3. **The Non-Linear Topology of Software**: Software repositories are fundamentally non-Euclidean. A defect manifesting in a test assertion is often caused by an invalid state transition 3 or 4 function-call hops away in an internal cryptographic or utility module. Flat retrieval-augmented generation (BM25 or dense text embeddings) fails because the issue description describes *symptoms* (e.g., `"Session 401 Unauthorized expected"`), whereas the root cause resides in a function whose tokens share zero lexical similarity with the symptom (e.g., `validate_timestamp(ts, max_age)`).
@@ -181,18 +181,7 @@ In enterprise software engineering, real repositories contain tens of thousands 
 | **50** | 13,749 | 1,100 | 26,775 | 252.8 ms | 9.2 ms | 82,896 | **818** | **99.0%** |
 | **80** | 21,999 | 1,760 | 68,040 | 385.8 ms | 20.3 ms | 132,636 | **818** | **99.4%** |
 
-```
-    RAW TOKENS VS. TOPOCODER CONTEXT FOOTPRINT ACROSS CODEBASE SCALE
-    140,000 ┼                                                     ● Raw (132,636)
-    120,000 ┼
-    100,000 ┼                                       ● Raw (82,896)
-     80,000 ┼
-     60,000 ┼                         ● Raw (41,446)
-     40,000 ┼
-     20,000 ┼           ● Raw (16,576)
-          0 ┼───────────■─────────────■─────────────■─────────────■ TopoCoder (818)
-            10 Mods     25 Mods       50 Mods       80 Mods
-```
+*(Visualized in Figure 2: `paper/figures/token_invariance.png`)*
 
 #### Groundbreaking Scalability Properties:
 * **Strict Context Window Invariance**: While the raw repository explodes from 16,576 to 132,636 tokens (completely exceeding the context capacity of Gemma and causing OOM on consumer GPUs), **TopoCoder's prompt remains strictly bounded at 818 tokens**!
@@ -201,13 +190,13 @@ In enterprise software engineering, real repositories contain tens of thousands 
 
 ---
 
-## 5. Related Work
+## 5. Related Work & Contrastive Analysis
 
 ### 5.1 Graph Representation Learning & Random Walks
-The foundation of random walks for representation learning on large graphs was established by Perozzi et al. (2014) in *DeepWalk*, demonstrating that localized stochastic walks capture structural neighborhood semantics efficiently. Rózemberczki et al. (2021) expanded relational graph machine learning with open tools such as *PyTorch Geometric Temporal*, and Galkin et al. (2024) pioneered foundational knowledge graph reasoning. TopoCoder builds upon these paradigms by applying directed, relational random walks with restart to multi-relational code property graphs, bridging classical random walk theory with modern agentic code comprehension.
+The foundation of random walks for representation learning on large graphs was established by Perozzi et al. (2014) in *DeepWalk* and *Walklets* (2017), demonstrating that localized stochastic walks capture neighborhood structural equivalence. Rózemberczki et al. (2020, 2021) pioneered scalable graph sampling (*Little Ball of Fur*) and temporal relational models (*PyTorch Geometric Temporal*). Galkin et al. (2024) introduced *ULTRA*, establishing foundation models for multi-relational knowledge graph reasoning. TopoCoder synthesizes these paradigms by formulating repository fault localization as a directed, multi-relational random walk with restart over hierarchical code property graphs.
 
-### 5.2 Agentic Software Engineering
-The introduction of SWE-bench (Jimenez et al., 2024) formalized the evaluation of autonomous agents on real-world GitHub issues. ReAct (Yao et al., 2023) established the predominant thought-action-observation loop for LLMs interacting with shell environments. However, existing frameworks (SWE-agent, Devin) rely on unrestricted file searches and cloud model contexts. TopoCoder represents the first architecture designed specifically to overcome edge hardware bottlenecks via topological subgraph condensation.
+### 5.2 Agentic SWE & Code Graph Navigation
+Jimenez et al. (2024) formalized real-world agent evaluation with SWE-bench. AutoCodeRover (Zhang et al., ISSTA 2024) integrated AST search with spectrum-based fault localization, and Agentless (Xia et al., 2024) demonstrated the utility of hierarchical localization (file $\to$ function $\to$ patch). Recently, RepoGraph (Ouyang et al., ICLR 2025) demonstrated that repository-level code graphs boost SWE-bench pass rates. However, RepoGraph was evaluated exclusively on massive 200k-token cloud models (Claude 3.5 Sonnet, GPT-4o), dumping uncompressed multi-thousand-token ego-graphs into context. When applied to small open models like Gemma on consumer hardware, uncompressed subgraphs cause immediate context exhaustion and attention degradation. TopoCoder uniquely resolves this open barrier by introducing **Topological Context Condensation (TCC)**, enforcing formal knapsack token bounds and reducing prompt size by up to 99.4%.
 
 ---
 
@@ -215,15 +204,18 @@ The introduction of SWE-bench (Jimenez et al., 2024) formalized the evaluation o
 
 As part of this submission, we release the complete, standalone open-source Python library **`codegraph`** (licensed under Apache 2.0).
 
-### Package Structure:
+### Package Capabilities:
 * `codegraph.schema`: Typed data models for modules, classes, functions, and relational edges.
 * `codegraph.parser`: Two-pass AST repository parser extracting multi-relational code property graphs.
 * `codegraph.graph`: NetworkX-compatible `CodeKnowledgeGraph` supporting fast adjacency queries and ego-networks.
 * `codegraph.pagerank`: Relational `PersonalizedCodeRank` implementation with bidirectional flow factors.
 * `codegraph.condensation`: Knapsack-based `TopologicalCondenser` enforcing strict token ceilings.
+* `codegraph.embeddings`: Structural random-walk embeddings and hybrid semantic-topological retrieval.
+* `codegraph.visualizer`: Standalone interactive web dashboard (`interactive_graph.html`) for visual graph exploration.
 * `codegraph.tools`: Clean agentic tool suite (`search_symbols`, `get_callers`, `get_callees`, `get_condensed_context`).
+* `agent.yaml`: Turn-key declarative specification compatible with the Kaggle Gemma 4 Developer Agent sandbox.
 * `agent.dual_process`: Complete Dual-Process Gemma Agent harness with AST syntax verification.
-* `benchmarks`: Automated replication runner and multi-hop SWE task suite.
+* `benchmarks`: Automated replication runner, multi-hop SWE task suite, and large-scale scaling simulation.
 
 ### Quickstart Replication:
 ```bash

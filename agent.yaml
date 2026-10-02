@@ -1,0 +1,84 @@
+# TopoCoder Gemma 4 Developer Agent Configuration
+# Compatible with the Google Gemma 4 Developer Agent Competition Sandbox
+
+version: "1.0.0"
+agent:
+  name: "topocoder"
+  description: "Offline Developer Agent with Topological Subgraph Condensation and Graph Reasoning"
+  model: "google/gemma-2-9b-it"
+  context_budget_tokens: 3000
+  execution_mode: "offline"
+
+system_prompt: |
+  You are TopoCoder, an autonomous software engineering agent running offline on consumer hardware.
+  You diagnose and resolve repository issues using an explicit Hierarchical Code Knowledge Graph.
+  Instead of dumping large files, you operate on condensed topological slices where focal root-cause
+  candidates are provided in full source code, and context nodes are represented as AST signature stubs.
+  
+  Operational Protocol:
+  1. Inspect the Causal Execution Chain connecting the failing unit test to callee nodes.
+  2. Examine the focal node implementation where the defect originates.
+  3. Validate contract boundaries using the interface stubs.
+  4. Synthesize an atomic, syntactically exact patch wrapped in ```python blocks.
+
+tools:
+  - name: "search_symbols"
+    description: "Search functions, classes, and tests across the repository using hybrid semantic-topological retrieval."
+    module: "codegraph.tools"
+    handler: "search_symbols"
+    parameters:
+      query:
+        type: "string"
+        description: "Symbol identifier or keyword"
+      limit:
+        type: "integer"
+        default: 8
+
+  - name: "get_callers"
+    description: "Find all functions and methods that invoke the specified node."
+    module: "codegraph.tools"
+    handler: "get_callers"
+    parameters:
+      node_id:
+        type: "string"
+        description: "Qualified node ID (e.g. module:Class.method)"
+
+  - name: "get_callees"
+    description: "Find all functions and methods invoked by the specified node."
+    module: "codegraph.tools"
+    handler: "get_callees"
+    parameters:
+      node_id:
+        type: "string"
+        description: "Qualified node ID (e.g. module:Class.method)"
+
+  - name: "get_condensed_context"
+    description: "Compute Personalized CodeRank from seed symbols and pack a bounded topological slice under token budget."
+    module: "codegraph.tools"
+    handler: "get_condensed_context"
+    parameters:
+      seed_names_or_ids:
+        type: "array"
+        items:
+          type: "string"
+        description: "Failing test name or traceback symbol names"
+      budget_tokens:
+        type: "integer"
+        default: 2500
+
+  - name: "inspect_node"
+    description: "Retrieve full source code, line numbers, and docstring for an individual node."
+    module: "codegraph.tools"
+    handler: "inspect_node"
+    parameters:
+      node_id:
+        type: "string"
+        description: "Qualified node ID"
+
+skills:
+  - name: "topological_fault_localization"
+    description: "Traces dynamic execution paths backwards from test assertions to internal root causes using Personalized CodeRank."
+  - name: "bounded_context_synthesis"
+    description: "Synthesizes bug fixes within strict 3k token budgets without reading full files."
+  - name: "ast_patch_verification"
+    description: "Verifies Python AST grammar and indentation before applying modifications."

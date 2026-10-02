@@ -86,6 +86,7 @@ When running open models such as **Gemma (2B / 9B)** on consumer hardware (e.g.,
 ├── LICENSE                                # Open Source Apache 2.0 License
 ├── README.md                              # Project documentation & reproduction guide
 ├── setup.py                               # Package installation script
+├── agent.yaml                             # Declarative config for Kaggle Gemma 4 sandbox
 ├── codegraph/                             # Core Reusable Library ("Best New Resource")
 │   ├── __init__.py                        # Package exports
 │   ├── schema.py                          # H-CKG node & edge type definitions
@@ -93,6 +94,8 @@ When running open models such as **Gemma (2B / 9B)** on consumer hardware (e.g.,
 │   ├── graph.py                           # NetworkX-compatible CodeKnowledgeGraph engine
 │   ├── pagerank.py                        # Personalized CodeRank (relational random walk)
 │   ├── condensation.py                    # Topological Context Condenser (knapsack solver)
+│   ├── embeddings.py                      # Structural random-walk embeddings & hybrid retrieval
+│   ├── visualizer.py                      # Interactive HTML/JS graph dashboard renderer
 │   └── tools.py                           # Standardized agent navigation tool suite
 ├── agent/                                 # Agent Scaffolding & Verification
 │   ├── __init__.py                        # Agent module exports
@@ -107,10 +110,11 @@ When running open models such as **Gemma (2B / 9B)** on consumer hardware (e.g.,
 ├── paper/                                 # Official Research Submission
 │   ├── kaggle_writeup.md                  # Kaggle Writeup (≤ 3,000 words, publication-ready)
 │   ├── main.tex                           # Full arXiv/NeurIPS LaTeX draft
+│   ├── main.pdf                           # Compiled 5-page publication-ready PDF
 │   ├── references.bib                     # Academic BibTeX citations
-│   └── figures/                           # High-resolution benchmark charts
+│   └── figures/                           # Benchmark charts & interactive_graph.html
 └── tests/                                 # Unit & Integration Tests
-    ├── test_codegraph.py                  # Parser, graph, and condensation tests
+    ├── test_codegraph.py                  # Parser, graph, embeddings, and visualizer tests
     └── test_agent.py                      # Verifier and dual-process agent tests
 ```
 

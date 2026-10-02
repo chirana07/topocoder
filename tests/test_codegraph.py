@@ -3,6 +3,7 @@ Unit and integration tests for the TopoCoder codegraph engine.
 Tests parsing, graph indexing, Personalized CodeRank, and Context Condensation.
 """
 
+import os
 import pytest
 from codegraph.schema import EdgeType, NodeType
 from codegraph.parser import RepositoryParser
@@ -145,3 +146,34 @@ def test_tool_suite_integration(sample_graph):
     node_detail = tools.inspect_node(symbols[0]["id"])
     assert node_detail is not None
     assert "def _clean" in node_detail["source_code"]
+
+
+def test_structural_embeddings_and_retrieval(sample_graph):
+    """Verifies that random walk structural embeddings capture neighborhood proximity."""
+    from codegraph.embeddings import StructuralGraphEmbedder, HybridRetriever
+    
+    embedder = StructuralGraphEmbedder(sample_graph, embedding_dim=16, walk_length=6, walks_per_node=10)
+    embs = embedder.fit(random_seed=42)
+    assert embs.shape[0] == len(sample_graph.nodes)
+    assert embs.shape[1] == 16
+    
+    # Test hybrid retrieval
+    retriever = HybridRetriever(sample_graph, embedder)
+    results = retriever.query("transform normalize payload", alpha_semantic=0.6, top_k=3)
+    assert len(results) > 0
+    top_ids = [nid for nid, _ in results]
+    assert any("transform" in tid or "normalize" in tid for tid in top_ids)
+
+
+def test_interactive_visualizer_generation(sample_graph, tmp_path):
+    """Verifies that the interactive HTML graph is generated cleanly."""
+    from codegraph.visualizer import generate_interactive_html
+    
+    out_file = str(tmp_path / "test_graph.html")
+    res_path = generate_interactive_html(sample_graph, output_path=out_file)
+    assert os.path.exists(res_path)
+    with open(res_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "vis-network" in content
+    assert "TopoCoder Graph Explorer" in content
+

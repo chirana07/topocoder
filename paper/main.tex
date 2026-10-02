@@ -6,10 +6,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{microtype}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
 \usepackage{xcolor}
-\usepackage{enumitem}
 
 \hypersetup{
     colorlinks=true,
@@ -39,7 +36,7 @@ In this work, we introduce \textbf{TopoCoder}, a neuro-symbolic framework that b
 Autonomous software engineering agents have demonstrated remarkable capabilities on benchmarks such as SWE-bench \cite{jimenez2024swebench}. However, existing agents depend almost universally on proprietary cloud APIs. This reliance introduces critical barriers: prohibitive recurring inference costs, code privacy vulnerabilities for proprietary enterprise repositories, network latency, and complete failure in offline or air-gapped environments.
 
 Deploying small, open-weight models like Google's Gemma \cite{gemma2024team} on consumer hardware offers an attractive path toward ubiquitous, private coding assistance. Yet, running an agent locally on everyday hardware introduces severe challenges:
-\begin{enumerate}[leftmargin=*]
+\begin{enumerate}
     \item \textbf{Context Window and KV-Cache Memory Limits}: On consumer GPUs or Apple Silicon unified memory (8GB--16GB), running Gemma-2-9B requires 4-bit or 8-bit quantization. Allocating multi-tens-of-thousands of tokens for KV-caches exhausts available memory and severely throttles decoding throughput.
     \item \textbf{Context Pollution and Hallucination}: Naive file dumps via grep overwhelm small models, leading to attention degradation and loss of the causal thread of execution.
     \item \textbf{Non-Euclidean Software Topologies}: Bugs in real codebases rarely share keyword similarity with user-reported symptoms. Defect root causes frequently reside 3 or 4 function-call hops away from the failing test in internal utility modules.
@@ -65,7 +62,7 @@ Given a seed set $\mathcal{S} \subset \mathcal{V}$ derived from a failing unit t
 \begin{equation}
 p_0(v) = \begin{cases} \frac{1}{|\mathcal{S}|}, & v \in \mathcal{S} \\ 0, & v \notin \mathcal{S} \end{cases}
 \end{equation}
-We define the relational transition matrix $\mathbf{P} \in \mathbb{R}^{|\mathcal{V}| \times |\mathcal{V}|}$ with relation-specific weights $w_r$ and a reverse flow factor $\beta = 0.4$:
+Drawing inspiration from random walk representation learning \cite{perozzi2014deepwalk,perozzi2017walklets} and inductive relational reasoning \cite{galkin2023towards}, we define the relational transition matrix $\mathbf{P} \in \mathbb{R}^{|\mathcal{V}| \times |\mathcal{V}|}$ with relation-specific weights $w_r$ and a reverse flow factor $\beta = 0.4$:
 \begin{equation}
 A_{uv} = \sum_{r \in \mathcal{R}} \left( w_r \cdot \mathbf{1}_{(u, r, v) \in \mathcal{E}} + \beta \cdot w_r \cdot \mathbf{1}_{(v, r, u) \in \mathcal{E}} \right), \quad P_{uv} = \frac{A_{uv}}{\sum_k A_{uk}}
 \end{equation}
@@ -76,7 +73,7 @@ The stationary Personalized CodeRank vector $\mathbf{\pi}$ is calculated via pow
 Power iteration converges in $O(|\mathcal{E}|)$ operations, completing in $<20$\,ms on standard CPU hardware. By filtering candidates to executable function entities ($\mathcal{V}_{\text{function}} \cup \mathcal{V}_{\text{method}}$) and excluding the test seed $\mathcal{S}$, PCR effectively inverts the execution call stack into a stationary ranking of candidate defect locations.
 
 \subsection{Topological Context Condensation (TCC)}
-Under a hard edge token budget $B$ (e.g., $B = 2,500$ tokens), prompt assembly is solved as a bounded knapsack optimization problem:
+Unlike recent code graph frameworks like RepoGraph \cite{ouyang2024repograph} that dump uncompressed ego-graphs to 200k-token cloud models, TopoCoder solves prompt assembly as a bounded knapsack optimization problem under a hard token budget $B$ (e.g., $B = 2,500$ tokens):
 \begin{align}
 \max_{\mathcal{F}, \mathcal{C} \subset \mathcal{V}} & \sum_{v \in \mathcal{F}} \mathbf{\pi}(v) + \lambda \sum_{u \in \mathcal{C}} \mathbf{\pi}(u) \\
 \text{s.t.} \quad & \sum_{v \in \mathcal{F}} \text{Cost}_{\text{full}}(v) + \sum_{u \in \mathcal{C}} \text{Cost}_{\text{stub}}(u) \le B - \Delta_{\text{prompt}} \\
@@ -90,7 +87,7 @@ This allows TopoCoder to include critical boundary interfaces and type annotatio
 
 \subsection{Dual-Process Architecture}
 TopoCoder couples a fast symbolic process with a deliberative neural model:
-\begin{itemize}[leftmargin=*]
+\begin{itemize}
     \item \textbf{System 1 (Topological Navigator)}: Executes on CPU. Parses repository ASTs, computes PCR, traces relational call paths, and packs the condensed topological slice.
     \item \textbf{System 2 (Gemma Synthesizer)}: Receives the condensed context ($<850$ tokens), diagnoses the root cause, and generates the corrected implementation.
     \item \textbf{AST Verification Gate}: Performs syntactic and AST validation prior to applying patches to prevent syntax regression.
@@ -107,6 +104,7 @@ We evaluated TopoCoder on our curated multi-hop benchmark suite (\texttt{TopoBen
 \caption{Defect Localization Recall and Token Footprint on Multi-Hop Repository Tasks}
 \label{tab:localization}
 \vspace{2mm}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Method} & \textbf{Recall@3 (\%)} & \textbf{Recall@5 (\%)} & \textbf{Avg. Context Tokens} & \textbf{Token Reduction (\%)} \\
@@ -117,6 +115,7 @@ Full-Graph (Uncompressed) & 60.0\% & N/A & 379.6 & -42.4\% \\
 \textbf{TopoCoder (Ours)} & \textbf{60.0\%} & \textbf{100.0\%} & \textbf{Bounded ($\le 552$)} & \textbf{Topological Invariant} \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 As shown in Table~\ref{tab:localization}, TopoCoder achieves \textbf{100.0\% Recall@5}, ensuring that the true defect is consistently captured within the top 4 candidates across all multi-hop tasks.
@@ -130,6 +129,7 @@ To evaluate scalability, we synthesized multi-module enterprise codebases scalin
 \caption{Algorithmic Scalability and Context Invariance Across Repository Sizes}
 \label{tab:scaling}
 \vspace{2mm}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{cccccccc}
 \toprule
 \textbf{Modules} & \textbf{Lines of Code} & \textbf{Nodes ($|\mathcal{V}|$)} & \textbf{Edges ($|\mathcal{E}|$)} & \textbf{Parse Time} & \textbf{PCR Time} & \textbf{Raw Tokens} & \textbf{TopoCoder Tokens} \\
@@ -140,17 +140,33 @@ To evaluate scalability, we synthesized multi-module enterprise codebases scalin
 80 & 21,999 & 1,760 & 68,040 & 385.8\,ms & 20.3\,ms & 132,636 & \textbf{818} (99.4\% red.) \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
-Table~\ref{tab:scaling} highlights TopoCoder's most compelling theoretical and practical property: **Context Invariance**. While raw codebase tokens explode from 16k to over 132k tokens, TopoCoder's condensed context remains invariant at **818 tokens**, achieving a **99.4\% token reduction** on large repositories while executing in $<21$\,ms on CPU.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.48\textwidth]{figures/token_consumption.png}
+\hfill
+\includegraphics[width=0.48\textwidth]{figures/token_invariance.png}
+\caption{Empirical verification: (Left) Average prompt token consumption across baselines; (Right) Context invariance of TopoCoder as codebase size scales to 22,000+ lines.}
+\label{fig:empirical}
+\end{figure}
+
+Table~\ref{tab:scaling} and Figure~\ref{fig:empirical} highlight TopoCoder's most compelling theoretical and practical property: \textbf{Context Invariance}. While raw codebase tokens explode from 16k to over 132k tokens, TopoCoder's condensed context remains invariant at \textbf{818 tokens}, achieving a \textbf{99.4\% token reduction} on large repositories while executing in $<21$\,ms on CPU.
+
+\section{Related Work}
+\textbf{Graph Representation Learning}: Perozzi et al.~\cite{perozzi2014deepwalk,perozzi2017walklets} established random walk representations for network neighborhoods, while R{\'o}zemberczki et al.~\cite{rozemberczki2020little,rozemberczki2021pytorch} developed scalable graph sampling and temporal graph models. Galkin et al.~\cite{galkin2023towards} pioneered inductive knowledge graph reasoning. TopoCoder applies these foundations to directed code property graphs.
+
+\textbf{Agentic Software Engineering}: Jimenez et al.~\cite{jimenez2024swebench} formalized SWE-bench. AutoCodeRover~\cite{zhang2024autocoderover} introduced AST-based search with spectrum fault localization, and Agentless~\cite{xia2024agentless} demonstrated the effectiveness of hierarchical localization. RepoGraph~\cite{ouyang2024repograph} demonstrated that repository-level code graphs boost cloud models. TopoCoder uniquely advances this frontier by introducing Bounded Topological Condensation to make code graphs viable on edge-constrained hardware.
 
 \section{The \texttt{codegraph} Software Resource}
 We release \texttt{codegraph} under the Apache 2.0 license as a standalone, extensible Python library. It includes:
-\begin{itemize}[leftmargin=*]
+\begin{itemize}
     \item Multi-relational AST parsing with two-pass cross-symbol resolution.
     \item Efficient Personalized CodeRank engine implemented in NumPy/SciPy.
     \item Knapsack-based Topological Context Condenser with customizable token ceilings.
-    \item Out-of-the-box integration with Gemma models via Hugging Face \texttt{transformers}.
+    \item Interactive web-based graph visualization dashboard (\texttt{interactive\_graph.html}).
+    \item Full declarative \texttt{agent.yaml} integration for the Google Gemma 4 Developer Agent sandbox.
 \end{itemize}
 
 \section{Conclusion}
