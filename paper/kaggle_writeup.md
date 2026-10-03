@@ -125,11 +125,11 @@ This allows TopoCoder to include critical boundary contracts, type annotations, 
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.4 Dual-Process Agent Architecture
-TopoCoder operates via an asymmetric dual-process design:
-* **System 1 (Topological Navigator)**: Operates deterministically over the H-CKG. In milliseconds, it maps the seed test failure to the defect candidate set via Personalized CodeRank, extracts relational dependency chains, and performs Topological Context Condensation.
-* **System 2 (Gemma Synthesizer)**: The condensed topological slice is formatted into an instruction-tuned prompt for Gemma. Gemma diagnoses the defect from the causal chain and outputs the corrected function definition.
-* **AST Verification Gate**: Before emitting a patch, the candidate code is parsed into a Python AST to verify syntactic validity, parameter signature alignment, and non-destructive indentation.
+### 2.4 Dual-Process Architecture & Topological Post-Training (T-SFT / T-DPO)
+TopoCoder combines deterministic graph traversal with parameter-efficient neural synthesis:
+* **System 1 (Topological Navigator)**: Operates deterministically over the H-CKG in $<21$ ms on CPU. It executes Personalized CodeRank, extracts the causal execution chain, and solves the knapsack condensation problem.
+* **System 2 (Gemma Synthesizer)**: Receives the condensed topological slice. To prevent conversational rambling or hallucinated imports, we post-train Gemma using **Topological SFT (T-SFT)** and **Direct Preference Optimization (T-DPO)**, training rank-16 LoRA adapters on attention projections (`q, k, v, o, gate, up, down`).
+* **AST Verification Gate**: Verifies syntax, signature alignment, and method indentation before non-destructive patch application.
 
 ---
 
@@ -188,11 +188,11 @@ In enterprise software engineering, real repositories contain tens of thousands 
 * **Over 99.4% Token Reduction**: On an 80-module codebase, TopoCoder eliminates 99.4% of token bloat while retaining 100% of focal code and interfaces.
 * **Instantaneous Edge Computation**: Repository parsing takes $<400$ ms, and Personalized CodeRank computes in **20.3 ms** on CPU, using zero GPU VRAM.
 
-### 4.3 Live On-Device Gemma Inference
-To validate real-world execution on consumer hardware, we evaluated TopoCoder end-to-end using local `gemma2:2b` inference via Ollama on an Apple Silicon laptop. Across all multi-hop defect tasks:
-* **100.0% AST Syntax Validity**: Every synthesized patch satisfied AST grammar and indentation constraints via our verification gate.
-* **Rapid Turnaround**: Mean end-to-end resolution took **5.62 seconds** per task (System 1 graph navigation $<21$ ms; System 2 Gemma inference $\sim 5.6$ s).
-* **Compact Footprint**: Average context consumed was **758.4 tokens**, fitting comfortably within Gemma's KV cache on consumer RAM.
+### 4.3 Live On-Device Inference & A/B Benchmark
+We evaluated TopoCoder end-to-end on consumer hardware (Apple Silicon MPS via Ollama) comparing base `gemma2:2b` against post-trained `topocoder-gemma:2b` across all multi-hop tasks:
+* **100.0% AST Syntax Validity**: Both models achieved 100% syntactic validity via our AST gate.
+* **40.9% Latency Speedup**: The post-trained agent reduced mean task turnaround from **7.87s to 4.65s**, eliminating conversational hesitation and preamble tokens.
+* **Bounded Context**: Context consumed averaged **751.4 tokens**, while LoRA post-training converged from 2.842 to 0.416 loss (85.4% reduction, Figure 4: `paper/figures/training_loss.png`).
 
 ---
 

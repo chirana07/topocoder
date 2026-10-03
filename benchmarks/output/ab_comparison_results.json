@@ -1,0 +1,98 @@
+{
+  "base_model": {
+    "model": "gemma2:2b",
+    "tasks_count": 5,
+    "ast_valid_rate": 100.0,
+    "clean_format_rate": 100.0,
+    "avg_duration_sec": 7.87,
+    "avg_tokens": 758.4,
+    "task_details": [
+      {
+        "task_id": "TASK-01-AUTH-EXPIRATION",
+        "duration_sec": 9.099642291999771,
+        "tokens": 833,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-02-PIPELINE-NORMALIZATION",
+        "duration_sec": 8.723177334000866,
+        "tokens": 769,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-03-CACHE-COLLISION",
+        "duration_sec": 8.829037083000003,
+        "tokens": 811,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-04-RATE-LIMITER",
+        "duration_sec": 8.382056833001116,
+        "tokens": 639,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-05-METRICS-DRAIN",
+        "duration_sec": 4.334987000000183,
+        "tokens": 740,
+        "ast_valid": true,
+        "clean_format": true
+      }
+    ]
+  },
+  "post_trained_model": {
+    "model": "topocoder-gemma:2b",
+    "tasks_count": 5,
+    "ast_valid_rate": 100.0,
+    "clean_format_rate": 100.0,
+    "avg_duration_sec": 4.65,
+    "avg_tokens": 751.4,
+    "task_details": [
+      {
+        "task_id": "TASK-01-AUTH-EXPIRATION",
+        "duration_sec": 5.590945708001527,
+        "tokens": 833,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-02-PIPELINE-NORMALIZATION",
+        "duration_sec": 4.699931791999916,
+        "tokens": 769,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-03-CACHE-COLLISION",
+        "duration_sec": 4.835166417000437,
+        "tokens": 794,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-04-RATE-LIMITER",
+        "duration_sec": 4.397021499999028,
+        "tokens": 639,
+        "ast_valid": true,
+        "clean_format": true
+      },
+      {
+        "task_id": "TASK-05-METRICS-DRAIN",
+        "duration_sec": 3.7360761250001815,
+        "tokens": 722,
+        "ast_valid": true,
+        "clean_format": true
+      }
+    ]
+  },
+  "comparison_delta": {
+    "ast_valid_gain": 0.0,
+    "latency_delta_sec": -3.22,
+    "token_delta": -7.0,
+    "format_adherence_gain": 0.0
+  }
+}
