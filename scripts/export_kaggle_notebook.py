@@ -113,8 +113,8 @@ def generate_notebook(output_path: str = "TopoCoder_Kaggle_Submission.ipynb"):
         "outputs": [],
         "source": [
             "# 3. Execute Multi-Hop Defect Localization Benchmark (TopoBench)\n",
-            "from benchmarks.eval_runner import run_evaluation_suite\n",
-            "results = run_evaluation_suite()\n"
+            "from benchmarks.eval_runner import run_all_evaluations\n",
+            "results = run_all_evaluations()\n"
         ]
     })
 
@@ -126,8 +126,8 @@ def generate_notebook(output_path: str = "TopoCoder_Kaggle_Submission.ipynb"):
         "outputs": [],
         "source": [
             "# 4. Large-Scale Repository Invariance Simulation (Up to 22,000 Lines)\n",
-            "from benchmarks.large_repo_simulation import run_scalability_simulation\n",
-            "scaling_results = run_scalability_simulation()\n"
+            "from benchmarks.large_repo_simulation import run_scaling_experiment\n",
+            "scaling_results = run_scaling_experiment()\n"
         ]
     })
 

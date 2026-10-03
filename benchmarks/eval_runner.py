@@ -198,5 +198,8 @@ def generate_figures(summary_data: Dict[str, any]):
     print("Generated publication figures in paper/figures/")
 
 
+run_evaluation_suite = run_all_evaluations
+
+
 if __name__ == "__main__":
     run_all_evaluations()

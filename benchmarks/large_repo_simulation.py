@@ -147,5 +147,8 @@ def generate_scaling_plots(results: Dict[str, List]):
     print("Saved scaling figures to paper/figures/token_invariance.png and latency_scaling.png")
 
 
+run_scalability_simulation = run_scaling_experiment
+
+
 if __name__ == "__main__":
     run_scaling_experiment()
