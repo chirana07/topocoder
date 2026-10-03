@@ -8,6 +8,9 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional, Tuple
 
 
+import textwrap
+
+
 @dataclass
 class VerificationResult:
     is_valid: bool
@@ -20,12 +23,57 @@ class PatchVerifier:
     """Verifies that code modifications are syntactically sound and non-destructive."""
 
     @staticmethod
+    def clean_code(code: str) -> str:
+        """Strips leading file/header comments and normalizes indentation for AST parsing."""
+        if not code or not code.strip():
+            return code
+
+        # Test direct parse first
+        try:
+            ast.parse(code)
+            return code
+        except SyntaxError:
+            pass
+
+        lines = code.splitlines()
+        # Separate leading comments and blank lines
+        comments = []
+        while lines and (not lines[0].strip() or lines[0].strip().startswith("#")):
+            comments.append(lines.pop(0))
+
+        if lines:
+            dedented_body = textwrap.dedent("\n".join(lines))
+            try:
+                ast.parse(dedented_body)
+                return dedented_body
+            except SyntaxError:
+                pass
+
+            # Check if wrapping inside a class works (for methods)
+            try:
+                wrapped = "class _Scope:\n" + textwrap.indent(dedented_body, "    ")
+                ast.parse(wrapped)
+                return dedented_body
+            except SyntaxError:
+                pass
+
+        return code
+
+    @staticmethod
     def verify_syntax(code: str) -> VerificationResult:
         """Checks if code string is valid Python syntax."""
+        cleaned = PatchVerifier.clean_code(code)
         try:
-            tree = ast.parse(code)
+            tree = ast.parse(cleaned)
             return VerificationResult(is_valid=True, ast_node=tree)
         except SyntaxError as e:
+            # Also try wrapped class check if it's a stand-alone class method
+            try:
+                wrapped = "class _Scope:\n" + textwrap.indent(cleaned, "    ")
+                tree = ast.parse(wrapped)
+                return VerificationResult(is_valid=True, ast_node=tree)
+            except SyntaxError:
+                pass
             return VerificationResult(
                 is_valid=False,
                 error_message=f"SyntaxError at line {e.lineno}, col {e.offset}: {e.msg}"

@@ -1,0 +1,54 @@
+{
+  "model": "gemma2:2b",
+  "tasks_evaluated": 5,
+  "ast_valid_rate": 100.0,
+  "avg_duration_sec": 5.617138616399825,
+  "avg_tokens": 758.4,
+  "detailed_results": [
+    {
+      "task_id": "TASK-01-AUTH-EXPIRATION",
+      "target": "auth.crypto:validate_timestamp",
+      "focal_node_identified": "middleware.session:SessionMiddleware.process_request",
+      "duration_sec": 7.264951790999476,
+      "tokens": 833,
+      "ast_valid": true,
+      "patch_preview": "def process_request(self, headers: dict) -> int:"
+    },
+    {
+      "task_id": "TASK-02-PIPELINE-NORMALIZATION",
+      "target": "schema.sanitizer:_sanitize_field",
+      "focal_node_identified": "parser.record:RecordParser.parse",
+      "duration_sec": 5.40256591599973,
+      "tokens": 769,
+      "ast_valid": true,
+      "patch_preview": "def parse(self, raw_data: dict) -> dict:"
+    },
+    {
+      "task_id": "TASK-03-CACHE-COLLISION",
+      "target": "storage.hashing:compute_shard_key",
+      "focal_node_identified": "cache.manager:CacheManager.get_partition",
+      "duration_sec": 6.8945429580016935,
+      "tokens": 811,
+      "ast_valid": true,
+      "patch_preview": "def get_partition(self, namespace: str, key: str) -> str:"
+    },
+    {
+      "task_id": "TASK-04-RATE-LIMITER",
+      "target": "throttling.window:is_in_current_window",
+      "focal_node_identified": "throttling.limiter:RateLimiter.allow_request",
+      "duration_sec": 6.382969374999448,
+      "tokens": 639,
+      "ast_valid": true,
+      "patch_preview": "def allow_request(self, current_time: float) -> bool:"
+    },
+    {
+      "task_id": "TASK-05-METRICS-DRAIN",
+      "target": "telemetry.buffer:_drain",
+      "focal_node_identified": "metrics.collector:MetricsCollector.record",
+      "duration_sec": 2.1406630419987778,
+      "tokens": 740,
+      "ast_valid": true,
+      "patch_preview": "def record(self, metric: str):"
+    }
+  ]
+}

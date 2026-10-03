@@ -1,0 +1,174 @@
+[
+  {
+    "package": "http",
+    "nodes": 274,
+    "edges": 694,
+    "node_types": {
+      "module": 5,
+      "class": 38,
+      "function": 40,
+      "method": 191
+    },
+    "edge_types": {
+      "contains": 269,
+      "inherits": 23,
+      "calls": 402
+    },
+    "parse_ms": 47.54758399940329,
+    "pcr_ms": 6.737916999554727,
+    "raw_tokens": 54119,
+    "condensed_tokens": 601,
+    "token_reduction_pct": 98.88948428463202,
+    "top_ranked": [
+      [
+        "cookies:Morsel.__setitem__",
+        0.0733
+      ],
+      [
+        "cookies:Morsel.set",
+        0.0601
+      ],
+      [
+        "cookies:Morsel.update",
+        0.0601
+      ],
+      [
+        "cookies:Morsel.setdefault",
+        0.0548
+      ],
+      [
+        "cookies:Morsel",
+        0.0518
+      ]
+    ]
+  },
+  {
+    "package": "urllib",
+    "nodes": 310,
+    "edges": 989,
+    "node_types": {
+      "module": 6,
+      "class": 50,
+      "method": 181,
+      "function": 73
+    },
+    "edge_types": {
+      "contains": 304,
+      "inherits": 39,
+      "calls": 646
+    },
+    "parse_ms": 47.16545799965388,
+    "pcr_ms": 11.454333000074257,
+    "raw_tokens": 39196,
+    "condensed_tokens": 1333,
+    "token_reduction_pct": 96.59914276967038,
+    "top_ranked": [
+      [
+        "request:FileHandler.open_local_file",
+        0.0222
+      ],
+      [
+        "request:URLopener.open_local_file",
+        0.0219
+      ],
+      [
+        "request:URLopener.open_ftp",
+        0.0192
+      ],
+      [
+        "request:ftpwrapper.retrfile",
+        0.0164
+      ],
+      [
+        "request:AbstractHTTPHandler.do_open",
+        0.0161
+      ]
+    ]
+  },
+  {
+    "package": "logging",
+    "nodes": 300,
+    "edges": 1770,
+    "node_types": {
+      "module": 3,
+      "function": 42,
+      "class": 41,
+      "method": 214
+    },
+    "edge_types": {
+      "contains": 297,
+      "inherits": 17,
+      "calls": 1456
+    },
+    "parse_ms": 33.53258299830486,
+    "pcr_ms": 18.822791998900357,
+    "raw_tokens": 49242,
+    "condensed_tokens": 700,
+    "token_reduction_pct": 98.57844929125544,
+    "top_ranked": [
+      [
+        "config:ConvertingMixin.convert_with_key",
+        0.0772
+      ],
+      [
+        "config:BaseConfigurator.convert",
+        0.0667
+      ],
+      [
+        "config:ConvertingMixin.convert",
+        0.0588
+      ],
+      [
+        "config:ConvertingDict",
+        0.0422
+      ],
+      [
+        "config:ConvertingList",
+        0.0412
+      ]
+    ]
+  },
+  {
+    "package": "email",
+    "nodes": 662,
+    "edges": 2481,
+    "node_types": {
+      "module": 29,
+      "class": 129,
+      "method": 360,
+      "function": 144
+    },
+    "edge_types": {
+      "contains": 633,
+      "inherits": 94,
+      "calls": 1754
+    },
+    "parse_ms": 82.09783299935225,
+    "pcr_ms": 21.269417000439717,
+    "raw_tokens": 94234,
+    "condensed_tokens": 648,
+    "token_reduction_pct": 99.31235010718001,
+    "top_ranked": [
+      [
+        "contentmanager:ContentManager.set_content",
+        0.0747
+      ],
+      [
+        "contentmanager:ContentManager._find_set_handler",
+        0.0431
+      ],
+      [
+        "contentmanager:ContentManager.get_content",
+        0.0358
+      ],
+      [
+        "message:Message.get_content_maintype",
+        0.0332
+      ],
+      [
+        "contentmanager:ContentManager.__init__",
+        0.0309
+      ]
+    ]
+  }
+]

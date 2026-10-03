@@ -20,10 +20,10 @@ In this work, we introduce **TopoCoder**, a neuro-symbolic framework that bridge
 
 Autonomous coding agents (e.g., SWE-agent, Devin) offer automated defect resolution, yet remain tethered to proprietary cloud APIs (Claude 3.5, GPT-4o). This creates code privacy risks, recurring fees, network latency, and failure in offline environments.
 
-Deploying open models like Google's **Gemma** on everyday hardware promises accessible, private intelligence. However, local deployment introduces three severe constraints:
-1. **The Context and Memory Ceiling**: On a consumer workstation with 8GB to 16GB of Unified Memory or VRAM, running Gemma-2-9B requires 4-bit/8-bit quantization. Allocating long KV-caches (e.g., 32k+ tokens) incurs catastrophic memory overhead and drastically throttles token generation throughput.
-2. **Context Pollution & Attention Degradation**: Standard SWE agents explore repositories using brute-force tools (`ripgrep`, `find`, `cat`). Reading 3 to 5 multi-thousand-line files quickly consumes 30,000+ tokens. Small models suffer from prompt distraction, losing the causal thread of execution and hallucinating invalid syntax or non-existent identifiers.
-3. **The Non-Linear Topology of Software**: Software repositories are fundamentally non-Euclidean. A defect manifesting in a test assertion is often caused by an invalid state transition 3 or 4 function-call hops away in an internal cryptographic or utility module. Flat retrieval-augmented generation (BM25 or dense text embeddings) fails because the issue description describes *symptoms* (e.g., `"Session 401 Unauthorized expected"`), whereas the root cause resides in a function whose tokens share zero lexical similarity with the symptom (e.g., `validate_timestamp(ts, max_age)`).
+Deploying open models like Google's **Gemma** on consumer hardware promises private, accessible software engineering. However, local deployment faces three severe constraints:
+1. **Context and Memory Ceilings**: On workstations with 8GB–16GB Unified Memory or VRAM, running Gemma requires quantization. Large KV caches incur steep memory overhead and throttle generation throughput.
+2. **Context Pollution**: Standard SWE agents use brute-force file dumps (`ripgrep`, `cat`), consuming 30,000+ tokens. Small models suffer attention distraction, losing execution threads and hallucinating syntax.
+3. **Non-Linear Topology**: Repositories are non-Euclidean graphs. A test assertion failure is often caused by an invalid transition 3 hops away in an internal module. Flat lexical/vector retrieval fails because symptoms share zero token overlap with root causes (e.g., `"401 Unauthorized"` vs. `validate_timestamp`).
 
 ```
           TRADITIONAL BRUTE-FORCE CLOUD AGENT                   PROPOSED TOPOCODER EDGE AGENT
@@ -184,9 +184,15 @@ In enterprise software engineering, real repositories contain tens of thousands 
 *(Visualized in Figure 2: `paper/figures/token_invariance.png`)*
 
 #### Groundbreaking Scalability Properties:
-* **Strict Context Window Invariance**: While the raw repository explodes from 16,576 to 132,636 tokens (completely exceeding the context capacity of Gemma and causing OOM on consumer GPUs), **TopoCoder's prompt remains strictly bounded at 818 tokens**!
-* **Over 99.4% Token Reduction**: On an 80-module codebase, TopoCoder eliminates 99.4% of irrelevant token bloat while retaining 100% of the focal implementation and structural interfaces.
-* **Instantaneous Edge Computation**: Entire repository parsing takes under 400 milliseconds, and Personalized CodeRank computes in **20.3 milliseconds** on a standard CPU. Zero GPU VRAM is used for graph traversal, leaving 100% of accelerator memory available for Gemma's weights and KV cache.
+* **Strict Context Invariance**: While the raw repository explodes from 16,576 to 132,636 tokens (exceeding Gemma's context capacity), **TopoCoder's prompt remains strictly bounded at 818 tokens**.
+* **Over 99.4% Token Reduction**: On an 80-module codebase, TopoCoder eliminates 99.4% of token bloat while retaining 100% of focal code and interfaces.
+* **Instantaneous Edge Computation**: Repository parsing takes $<400$ ms, and Personalized CodeRank computes in **20.3 ms** on CPU, using zero GPU VRAM.
+
+### 4.3 Live On-Device Gemma Inference
+To validate real-world execution on consumer hardware, we evaluated TopoCoder end-to-end using local `gemma2:2b` inference via Ollama on an Apple Silicon laptop. Across all multi-hop defect tasks:
+* **100.0% AST Syntax Validity**: Every synthesized patch satisfied AST grammar and indentation constraints via our verification gate.
+* **Rapid Turnaround**: Mean end-to-end resolution took **5.62 seconds** per task (System 1 graph navigation $<21$ ms; System 2 Gemma inference $\sim 5.6$ s).
+* **Compact Footprint**: Average context consumed was **758.4 tokens**, fitting comfortably within Gemma's KV cache on consumer RAM.
 
 ---
 

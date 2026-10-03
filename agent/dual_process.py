@@ -164,6 +164,8 @@ class DualProcessGemmaAgent:
         if llm_backend:
             raw_response = llm_backend(prompt)
             patch_code = self._extract_code_block(raw_response)
+            if patch_code:
+                patch_code = self.verifier.clean_code(patch_code)
         else:
             # Deterministic synthesis rule for benchmark evaluation
             patch_code = self._synthesize_patch_heuristics(target_node, issue_description)
