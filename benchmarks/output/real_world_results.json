@@ -14,8 +14,8 @@
       "inherits": 23,
       "calls": 402
     },
-    "parse_ms": 45.750208000754355,
-    "pcr_ms": 14.018750000104774,
+    "parse_ms": 48.78912499953003,
+    "pcr_ms": 7.816958001058083,
     "raw_tokens": 54119,
     "condensed_tokens": 601,
     "token_reduction_pct": 98.88948428463202,
@@ -57,8 +57,8 @@
       "inherits": 39,
       "calls": 646
     },
-    "parse_ms": 44.70979100005934,
-    "pcr_ms": 9.397916999660083,
+    "parse_ms": 35.81091599880892,
+    "pcr_ms": 13.175333000617684,
     "raw_tokens": 39196,
     "condensed_tokens": 1333,
     "token_reduction_pct": 96.59914276967038,
@@ -100,8 +100,8 @@
       "inherits": 17,
       "calls": 1456
     },
-    "parse_ms": 42.503541999394656,
-    "pcr_ms": 16.589749999184278,
+    "parse_ms": 52.94158399919979,
+    "pcr_ms": 14.929916000255616,
     "raw_tokens": 49242,
     "condensed_tokens": 700,
     "token_reduction_pct": 98.57844929125544,
@@ -143,8 +143,8 @@
       "inherits": 94,
       "calls": 1754
     },
-    "parse_ms": 78.1387499991979,
-    "pcr_ms": 21.056125000541215,
+    "parse_ms": 80.39312499931839,
+    "pcr_ms": 21.06479200119793,
     "raw_tokens": 94234,
     "condensed_tokens": 648,
     "token_reduction_pct": 99.31235010718001,

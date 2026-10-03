@@ -16,7 +16,7 @@
   ],
   "modules_to_save": null,
   "bias": "none",
-  "final_loss": 0.4033,
+  "final_loss": 0.4265,
   "total_steps": 60,
   "dataset_samples": 60,
   "post_training_regime": "Topological Supervised Fine-Tuning (T-SFT) + DPO Alignment"
