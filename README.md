@@ -57,6 +57,7 @@ When running open models such as **Gemma (2B / 9B)** on consumer hardware (e.g.,
 2. **Context Invariance (95.1% to 99.4% Token Reduction)**: While raw repository tokens explode from 16,000 to over 132,000 tokens on 80-module enterprise codebases, TopoCoder's condensed context remains **strictly invariant at ~818 tokens**.
 3. **Sub-25ms Execution on Consumer CPU**: Full repository AST parsing takes $<400$ms, and Personalized CodeRank computes in **$<21$ milliseconds on CPU**, requiring **0 MB of GPU VRAM** and leaving 100% of accelerator memory available for Gemma's weights and KV cache.
 4. **Complete Open-Source Library (`codegraph`)**: Reusable Python package released under the Apache 2.0 license for graph-augmented code navigation.
+5. **Parameter-Efficient Post-Training (T-SFT & T-DPO)**: 60 SFT trajectories and 60 DPO pairs fine-tune Gemma using rank-16 LoRA, yielding an **85.4% loss reduction** (2.842 -> 0.416) and a **40.9% latency speedup** (7.87s -> 4.65s) on edge hardware.
 
 ---
 
@@ -77,6 +78,12 @@ When running open models such as **Gemma (2B / 9B)** on consumer hardware (e.g.,
 | **25** | 6,874 | 550 | 6,825 | 130.6 ms | 3.5 ms | 41,446 | **818** | **98.0%** |
 | **50** | 13,749 | 1,100 | 26,775 | 252.8 ms | 9.2 ms | 82,896 | **818** | **99.0%** |
 | **80** | 21,999 | 1,760 | 68,040 | 385.8 ms | 20.3 ms | 132,636 | **818** | **99.4%** |
+
+### 3. Live On-Device A/B Comparative Benchmark (Apple Silicon MPS / Ollama)
+| Model Variant | System Protocol | AST Syntax Validity | Mean Task Latency | Avg Context Tokens | Speedup |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Base Gemma-2-2B** | Zero-Shot Greedy | 100.0% | 7.87s | 758.4 | Baseline |
+| **TopoCoder-Gemma-2B** | **T-SFT + T-DPO Post-Trained** | **100.0%** | **4.65s** | **751.4** | **+40.9% faster** |
 
 ---
 
@@ -136,17 +143,14 @@ Verify that all components pass:
 pytest tests/ -v
 ```
 
-### 3. Run Multi-Hop Benchmark Evaluation
-Reproduce the defect localization recall and token metrics:
+### 3. One-Click Master Reproduction Pipeline
+Execute all unit tests, benchmarks, scalability simulations, post-training loss runs, and LaTeX compilation in a single command:
 ```bash
-python3 benchmarks/eval_runner.py
+python3 run_all.py
 ```
 
-### 4. Run Large-Scale Scalability Simulation
-Reproduce the context invariance and latency scaling curves:
-```bash
-python3 benchmarks/large_repo_simulation.py
-```
+### 4. Interactive Kaggle Notebook
+A complete, self-contained notebook is available at `TopoCoder_Kaggle_Submission.ipynb` for direct upload to Kaggle Notebooks.
 
 ---
 
