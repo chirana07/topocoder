@@ -132,7 +132,7 @@ When running open models such as **Gemma (2B / 9B)** on consumer hardware (e.g.,
 ### 1. Installation
 Clone the repository and install in editable mode:
 ```bash
-git clone https://github.com/topocoder/topocoder.git
+git clone https://github.com/chirana07/topocoder.git
 cd topocoder
 pip install -e .
 ```

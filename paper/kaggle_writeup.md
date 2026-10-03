@@ -5,7 +5,7 @@
 **Track**: Overall Best Paper ($15,000) & Best New Resource ($10,000)  
 **Authors**: TopoCoder Research Team  
 **License**: Open Source Apache 2.0  
-**Project Links**: Public Notebook & Open-Source Code Repository  
+**Project Links**: [GitHub Repository (Apache 2.0)](https://github.com/chirana07/topocoder) | [Kaggle Notebook](https://www.kaggle.com/code)  
 
 ---
 
@@ -226,7 +226,7 @@ As part of this submission, we release the complete, standalone open-source Pyth
 ### Quickstart Replication:
 ```bash
 # 1. Clone repository and install dependencies
-git clone https://github.com/topocoder/topocoder.git
+git clone https://github.com/chirana07/topocoder.git
 cd topocoder
 pip install -e .
 
